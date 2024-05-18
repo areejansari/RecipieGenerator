@@ -1,0 +1,26 @@
+# Import necessary libraries
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
+
+# Load pre-trained MobileNetV2 model
+model = tf.keras.applications.MobileNetV2(weights='imagenet', include_top=True)
+
+# Function to predict image classes
+def predict_image(image_path):
+    img = image.load_img(image_path, target_size=(224, 224))  # Load image with target size
+    img_array = image.img_to_array(img)  # Convert image to array
+    img_array = np.expand_dims(img_array, axis=0)  # Expand dimensions for model input
+    img_array = preprocess_input(img_array)  # Preprocess the input image
+    predictions = model.predict(img_array)  # Make predictions
+    decoded_predictions = decode_predictions(predictions, top=3)[0]  # Decode predictions
+    print("Predictions:")
+    for _, label, confidence in decoded_predictions:
+        print(f"{label}: {confidence * 100:.2f}%")
+
+# Path to your test image
+image_path = 'aipic.png'
+
+# Perform prediction
+predict_image(image_path)
